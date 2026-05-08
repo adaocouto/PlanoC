@@ -1,0 +1,1306 @@
+
+<!-- NomeDoApp = "Hidratação com Plano C" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Cálculo de Hidratação Plano C</title>
+ <meta name="description" content="Ferramenta de apoio para hidratação intravenosa no Plano C de desidratação grave por diarreia.">
+ <style>
+  :root {
+   --surface: #ffffff;
+   --radius-xl: 22px;
+
+   --bg: #f7fafc;
+   --card: #ffffff;
+   --border: #d9e2ec;
+   --text: #102a43;
+   --muted: #486581;
+   --accent: #0f6fc6;
+   --accent-soft: #e8f2fc;
+   --warn: #8a1c1c;
+   --warn-soft: #fff3f3;
+   --ok: #166534;
+   --ok-soft: #edfdf3;
+   --shadow: 0 1px 3px rgba(16, 42, 67, 0.06);
+   --radius: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+   margin: 0;
+   font-family: Arial, Helvetica, sans-serif;
+   background: var(--bg);
+   color: var(--text);
+   line-height: 1.45;
+  }
+
+ .wrap {
+   max-width: 1120px;
+   margin: 0 auto;
+   padding: 24px;
+  }
+
+  h1, h2, h3 { margin: 0 0 12px; }
+  h1 { font-size: 1.6rem; letter-spacing: -0.5px; text-align: center; }
+  h2 { font-size: 1.15rem; color: var(--accent); }
+  p { margin: 0 0 10px; }
+
+ .lead {
+   color: var(--muted);
+   margin-bottom: 18px;
+   font-size: 0.82rem;
+   margin-top: 4px;
+  }
+
+ .grid {
+   display: grid;
+   grid-template-columns: repeat(12, 1fr);
+   gap: 16px;
+  }
+
+ .card {
+   grid-column: span 12;
+   background: var(--card);
+   border: 1px solid var(--border);
+   border-radius: var(--radius);
+   padding: 18px;
+   box-shadow: var(--shadow);
+  }
+
+  @media (min-width: 880px) {
+  .span-6 { grid-column: span 6; }
+  .span-12 { grid-column: span 12; }
+  }
+
+ .inputs {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+   gap: 14px;
+   margin-top: 14px;
+  }
+
+  label {
+   display: block;
+   font-weight: 700;
+   margin-bottom: 6px;
+  }
+
+  input, select, button {
+   font: inherit;
+  }
+
+  input, select {
+   width: 100%;
+   padding: 10px 12px;
+   border: 1px solid var(--border);
+   border-radius: 10px;
+   font-size: 1rem;
+   color: var(--text);
+   background: #fff;
+  }
+
+  input:focus, select:focus {
+   outline: none;
+   border-color: var(--accent);
+   box-shadow: 0 0 0 4px rgba(15, 111, 198, 0.12);
+  }
+
+  input[type="checkbox"] {
+   width: auto;
+   margin: 0;
+   transform: translateY(1px);
+  }
+
+ .checkline {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   font-weight: 400;
+   margin-top: 8px;
+  }
+
+ .actions {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+   margin-top: 16px;
+  }
+
+  button {
+   border: none;
+   border-radius: 12px;
+   padding: 12px 16px;
+   font-size: 1rem;
+   font-weight: 700;
+   cursor: pointer;
+  }
+
+ .primary {
+   background: var(--accent);
+   color: #fff;
+  }
+
+ .secondary {
+   background: #eef2f6;
+   color: var(--text);
+  }
+
+ .hint,.warning,.okbox,.alert {
+   border-radius: 12px;
+   padding: 12px 14px;
+   margin-top: 14px;
+  }
+
+ .hint {
+   background: var(--accent-soft);
+   color: var(--text);
+  }
+
+ .warning {
+   background: var(--warn-soft);
+   color: var(--warn);
+  }
+
+ .okbox {
+   background: var(--ok-soft);
+   color: var(--ok);
+  }
+
+ .alert {
+   display: none;
+   background: var(--warn-soft);
+   color: var(--warn);
+   border: 1px solid #f0c5c5;
+   font-weight: 700;
+  }
+
+ .kpi {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+   gap: 12px;
+  }
+
+ .metric {
+   border: 1px solid var(--border);
+   border-radius: 14px;
+   padding: 12px;
+   background: #fbfdff;
+  }
+
+ .metric.label {
+   color: var(--muted);
+   font-size: 0.92rem;
+   margin-bottom: 4px;
+  }
+
+ .metric.value {
+   font-size: 1.25rem;
+   font-weight: 700;
+  }
+
+  table {
+   width: 100%;
+   border-collapse: collapse;
+   margin-top: 8px;
+  }
+
+  th, td {
+   border-bottom: 1px solid var(--border);
+   padding: 10px 8px;
+   text-align: left;
+   vertical-align: top;
+  }
+
+  th {
+   color: var(--muted);
+   font-size: 0.92rem;
+  }
+
+ .mono {
+   font-family: Consolas, Monaco, monospace;
+  }
+
+ .small {
+   font-size: 0.92rem;
+   color: var(--muted);
+  }
+
+ .foot {
+   margin-top: 18px;
+   font-size: 0.92rem;
+   color: var(--muted);
+      text-align: justify;
+    }
+
+
+  @media (max-width: 820px) {
+  .kpi {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+   }
+
+  .metric {
+    padding: 10px;
+   }
+
+  .metric.label {
+    font-size: 0.82rem;
+   }
+
+  .metric.value {
+    font-size: 1.02rem;
+   }
+
+   table {
+    table-layout: fixed;
+   }
+
+   th, td {
+    padding: 8px 6px;
+    font-size: 0.82rem;
+    line-height: 1.3;
+    word-break: break-word;
+   }
+
+   th {
+    font-size: 0.78rem;
+   }
+
+  .foot {
+    font-size: 0.84rem;
+   }
+  }
+
+  @media (max-width: 560px) {
+  .wrap {
+    padding: 16px;
+   }
+
+  .card {
+    padding: 14px;
+   }
+
+  .section-title {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin: -18px -18px 12px;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+  .metric.label {
+    font-size: 0.76rem;
+   }
+
+  .metric.value {
+    font-size: 0.95rem;
+   }
+
+   th, td {
+    padding: 7px 4px;
+    font-size: 0.76rem;
+   }
+
+   th {
+    font-size: 0.72rem;
+   }
+
+  .mono {
+    font-size: 0.72rem;
+   }
+  }
+
+ .section-title {
+   margin-bottom: 4px;
+  }
+
+  .section-subtitle {
+      margin: -4px 0 12px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.25;
+    }
+
+  .section-subtitle-inline {
+   display: inline-block;
+   color: var(--muted);
+   font-size: 0.82rem;
+   font-weight: 700;
+   line-height: 1.2;
+  }
+ 
+ .legal-disclaimer {
+   margin: 16px 0 0;
+   font-size: 12px;
+   line-height: 1.2;
+   color: #5c6f87;
+   text-align: justify;
+   word-break: break-word;
+   background: var(--surface, #ffffff);
+   border: 1px solid var(--border, #cddbea);
+   border-radius: var(--radius-xl, 22px);
+   box-shadow: var(--shadow, 0 16px 34px rgba(18, 44, 73, 0.10));
+   padding: 16px;
+  }
+
+ .signature-block {
+   text-align: center;
+   color: #5c6f87;
+   font-size: 14px;
+   line-height: 1.5;
+   margin-top: 0;
+  }
+
+ .spacer-3lines {
+   height: 2.8em;
+  }
+
+ .spacer-1line {
+   height: 1.4em;
+  }
+ 
+    .card-minimizable .section-title {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-minimizable .section-title::after {
+      content: "▸";
+      float: right;
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    .card-minimizable:not(.is-minimized) .section-title::after {
+      content: "▾";
+    }
+
+    .card-minimizable.is-minimized .minimizable-body {
+      display: none;
+    }
+
+    .card-minimizable:not(.is-minimized) .minimizable-body {
+      display: block;
+    }
+
+  
+    .espaco-antes-titulo {
+      height: 1em;
+    }
+  
+ .main-title-box {
+   background: #eef2f6;
+   border: 1px solid var(--border);
+   border-radius: 14px;
+   padding: 12px 14px;
+   margin: 0 0 10px;
+  }
+
+  </style>
+</head>
+<body>
+ <div class="wrap">
+  <div class="card">
+   <div class="espaco-antes-titulo" aria-hidden="true"></div>
+      <h1 class="main-title-box">💧Hidratação Venosa com o Plano C na desidratação</h1>
+   <p class="lead">Ferramenta de apoio para desidratação grave por diarreia, baseada nas fórmulas do Ministério da Saúde para Plano C.</p>
+
+   <div class="inputs">
+    <div>
+     <label for="peso">Peso (kg)</label>
+     <input type="number" step="0.001" min="1" max="100" id="peso" name="peso" value="6">
+    </div>
+    <div>
+     <label for="faixa">Faixa etária para a fase de expansão</label>
+     <select id="faixa">
+      <option value="lt1" selected>Menor de 1 ano</option>
+      <option value="ge1">1 ano ou mais</option>
+     </select>
+    </div>
+    <div>
+     <label for="perdasExtras">Perdas contínuas adicionais (mL/24h)</label>
+     <input type="number" step="1" min="0" max="2000" id="perdasExtras" name="perdasExtras" value="0" autocomplete="off" placeholder="Ex.: 150">
+     <div class="small">Somadas manualmente à reposição inicial de 50 mL/kg/dia.</div>
+    </div>
+   </div>
+
+   <div class="inputs">
+    <div>
+     <label class="checkline"><input type="checkbox" id="especial"> Recém-nascido ou menor de 5 anos com cardiopatia grave</label>
+     <div class="small">Os 10ml/kg devem ser repetidos após avaliação médica e até totalizar o recomendado da fase de expansão.</div>
+    </div>
+    <div>
+     <label class="checkline"><input type="checkbox" id="diurese" checked> Diurese estabelecida</label>
+     <div class="small">Se marcado, o cálculo adiciona KCl 10% à manutenção: 2 mL para cada 100 mL de solução de manutenção.</div>
+    </div>
+   </div>
+
+   <div class="actions">
+    <button class="secondary" type="button" id="btnLimpar">Limpar</button>
+   </div>
+<div class="alert" id="alertBox" role="alert" aria-live="polite"></div>
+  </div>
+
+  <div class="grid" id="resultados" style="margin-top:16px; display:none;">
+   <div class="card span-6">
+    <h2 class="section-title">Fase de Expansão</h2>
+    <div class="kpi">
+     <div class="metric">
+      <div class="label">Volume total da expansão</div>
+      <div class="value" id="expTotal">–</div>
+     </div>
+     <div class="metric">
+      <div class="label">Tempo total da expansão</div>
+      <div class="value" id="expTempoTotal">–</div>
+     </div>
+    </div>
+    <table>
+     <thead>
+      <tr>
+       <th>Etapa</th>
+       <th>Solução</th>
+       <th>Volume</th>
+       <th>Tempo</th>
+       <th>Taxa</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr id="fase1Row">
+       <td>1ª fase</td>
+       <td>SF 0,9% ou Ringer Lactato</td>
+       <td id="fase1Vol">–</td>
+       <td id="fase1Tempo">–</td>
+       <td id="fase1Taxa">–</td>
+      </tr>
+      <tr id="fase2Row">
+       <td>2ª fase</td>
+       <td>SF 0,9% ou Ringer Lactato</td>
+       <td id="fase2Vol">–</td>
+       <td id="fase2Tempo">–</td>
+       <td id="fase2Taxa">–</td>
+      </tr>
+      <tr id="especialRow">
+       <td>Início cauteloso</td>
+       <td>SF 0,9% ou Ringer Lactato</td>
+       <td id="especialVol">–</td>
+       <td id="especialTempo">–</td>
+       <td id="especialTaxa">–</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <div class="card span-6">
+    <h2 class="section-title">Manutenção em 24 horas</h2>
+    <div class="section-subtitle">Volume base da fórmula de Holliday-Segar para a manutenção da hidratação.</div>
+    <div class="kpi">
+     <div class="metric">
+      <div class="label">Volume base de manutenção</div>
+      <div class="value" id="manutBase">–</div>
+     </div>
+     <div class="metric">
+      <div class="label">Taxa média final da manutenção</div>
+      <div class="value" id="manutTaxa">–</div>
+     </div>
+    </div>
+    <table>
+     <thead>
+      <tr>
+       <th>Componente</th>
+       <th>Volume/24h</th>
+       <th>Observação</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>SG 5%</td>
+       <td id="manutSG">–</td>
+       <td>Parte glicídica da solução 4:1</td>
+      </tr>
+      <tr>
+       <td>SF 0,9%</td>
+       <td id="manutSF">–</td>
+       <td>Parte salina da solução 4:1</td>
+      </tr>
+      <tr>
+       <td>KCl 10%</td>
+       <td id="manutKCl">–</td>
+       <td>2 mL para cada 100 mL da manutenção, apenas se houver diurese</td>
+      </tr>
+      <tr>
+       <td><strong>Total final da manutenção</strong></td>
+       <td id="manutTotal">–</td>
+       <td>Base da manutenção + volume do KCl</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <div class="card span-6">
+    <h2 class="section-title">Reposição inicial em 24 horas</h2>
+    <div class="section-subtitle">Infundir juntamente com a manutenção após a fase de expansão e manter até cessar as perdas pelas fezes líquidas.</div>
+    <div class="kpi">
+     <div class="metric">
+      <div class="label">Reposição inicial</div>
+      <div class="value" id="repoBase">–</div>
+     </div>
+     <div class="metric">
+      <div class="label">Taxa média</div>
+      <div class="value" id="repoTaxa">–</div>
+     </div>
+    </div>
+    <table>
+     <thead>
+      <tr>
+       <th>Componente</th>
+       <th>Volume/24h</th>
+       <th>Observação</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>SG 5%</td>
+       <td id="repoSG">–</td>
+       <td>Metade da solução 1:1</td>
+      </tr>
+      <tr>
+       <td>SF 0,9%</td>
+       <td id="repoSF">–</td>
+       <td>Metade da solução 1:1</td>
+      </tr>
+      <tr>
+       <td><strong>Total da reposição</strong></td>
+       <td id="repoTotal">–</td>
+       <td>50 mL/kg/dia + perdas contínuas adicionais informadas</td>
+      </tr>
+     </tbody>
+    </table>
+   </div>
+
+   <div class="card span-6 card-minimizable is-minimized" id="cardComposicaoTotal">
+    <h2 class="section-title">Composição Total Prescricional nas Primeiras 24 horas.</h2>
+    <div class="minimizable-body">
+        <div class="section-subtitle">Hidratação inicial nas primeiras 24h que inclui a Manutenção somado com a Reposição.</div>
+    <div class="kpi">
+     <div class="metric">
+      <div class="label">Total sem KCl</div>
+      <div class="value" id="globalTotal">–</div>
+     </div>
+     <div class="metric">
+      <div class="label">Taxa média global final</div>
+      <div class="value" id="globalTaxa">–</div>
+     </div>
+    </div>
+    <table>
+     <thead>
+      <tr>
+       <th>Componente</th>
+       <th>Volume/24h</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>SG 5% total</td>
+       <td id="globalSG">–</td>
+      </tr>
+      <tr>
+       <td>SF 0,9% total</td>
+       <td id="globalSF">–</td>
+      </tr>
+      <tr>
+       <td>KCl 10%</td>
+       <td id="globalKCl">–</td>
+      </tr>
+      <tr>
+       <td><strong>Total final</strong></td>
+       <td id="globalFinal">–</td>
+      </tr>
+     </tbody>
+    </table>
+    </div>
+   </div>
+
+   <div class="card span-12">
+    <h2 class="section-title">Leitura clínica do cálculo</h2>
+    <div id="mensagens"></div>
+    <div class="foot">
+          <strong>Base do cálculo:</strong> Plano C do Ministério da Saúde para manejo do paciente com diarreia (expansão, manutenção e reposição).<br>
+          <strong>Organização do cálculo:</strong> a expansão corresponde à fase inicial e é apresentada separadamente. A manutenção e a reposição são calculadas para o mesmo período de 24 horas: a manutenção estima a necessidade hídrica basal, enquanto a reposição acrescenta o volume destinado a déficit/perdas, compondo juntas a prescrição das 24 horas, com KCl apenas quando houver diurese estabelecida.<br>
+          <strong>Importante:</strong> esta página é apoio de cálculo e não substitui reavaliação clínica, controle de diurese, eletrólitos, glicemia, balanço hídrico, nem adaptação para cenários especiais (sepse, choque de outra etiologia, hipernatremia, insuficiência renal, cetoacidose diabética, queimaduras, desnutrição grave etc.). Em pediatria hospitalar, o uso de KCl exige diurese estabelecida e monitorização laboratorial.
+        </div>
+   </div>
+  </div>
+
+  <div class="legal-disclaimer">
+   <strong>Aviso Legal e Isenção de Responsabilidade:</strong><br>
+   Este software e todas as informações nele contidas são fornecidos exclusivamente com propósitos educacionais e de auxílio à referência médica. ESTE SISTEMA NÃO SUBSTITUI O JULGAMENTO CLÍNICO INDIVIDUAL, A ANAMNESE E O EXAME FÍSICO. As informações aqui apresentadas não devem ser utilizadas isoladamente para o diagnóstico, conduta ou tratamento de pacientes. A responsabilidade final por qualquer decisão clínica, prescrição ou intervenção é exclusiva do profissional de saúde assistente, devidamente habilitado. Os desenvolvedores não garantem a precisão absoluta de todos os dados e isentam-se de responsabilidade por quaisquer danos diretos, indiretos, materiais ou morais que resultem do uso inadequado, interpretação equivocada ou confiança exclusiva nas informações deste sistema. Pacientes e indivíduos leigos que utilizarem este software devem sempre buscar a orientação de um médico qualificado antes de tomar qualquer decisão sobre sua saúde.
+  
+  </div>
+  <div class="spacer-1line" aria-hidden="true"></div>
+<div class="signature-block"><strong>Desenvolvido por Adão L. L. Couto</strong></div>
+  <div class="spacer-3lines" aria-hidden="true"></div>
+</div>
+
+ 
+ <script>
+  (() => {
+   'use strict';
+
+   // ==========================================================
+   // constants / core domain
+   // ==========================================================
+   const HydrationPlanCCore = (() => {
+    const MAX_MANUTENCAO_24H = 2000;
+    const MIN_WEIGHT_KG = 1;
+    const MAX_WEIGHT_KG = 100;
+    const MAX_EXTRA_LOSSES_24H = 2000;
+
+    function parseLocaleNumber(value) {
+     if (typeof value !== 'string') return Number(value);
+     let raw = value.trim().replace(/\s+/g, '');
+     if (raw === '') return NaN;
+
+     // Aceita digitação decimal incompleta no momento do blur: "8.", "8,", "10.".
+     if (/^-?\d+[\.,]$/.test(raw)) {
+      raw = raw.slice(0, -1);
+     }
+
+     const hasDot = raw.includes('.');
+     const hasComma = raw.includes(',');
+
+     if (hasDot && hasComma) {
+      const lastDot = raw.lastIndexOf('.');
+      const lastComma = raw.lastIndexOf(',');
+      if (lastComma > lastDot) {
+       return Number(raw.replace(/\./g, '').replace(',', '.'));
+      }
+      return Number(raw.replace(/,/g, ''));
+     }
+
+     if (hasComma) {
+      return Number(raw.replace(',', '.'));
+     }
+
+     return Number(raw);
+    }
+
+    function roundToCoreDecimals(value, decimals) {
+     const factor = Math.pow(10, decimals);
+     return Math.round(value * factor) / factor;
+    }
+
+    function clampCore(value, min, max) {
+     if (!Number.isFinite(value)) return value;
+     return Math.min(Math.max(value, min), max);
+    }
+
+    function normalizeInputs(inputs) {
+     const rawWeightKg = Number(inputs && inputs.weightKg);
+     const rawExtraLosses24h = Number(inputs && inputs.extraLosses24h);
+
+     let weightKg = Number.isFinite(rawWeightKg)
+      ? clampCore(roundToCoreDecimals(rawWeightKg, 3), MIN_WEIGHT_KG, MAX_WEIGHT_KG)
+      : rawWeightKg;
+
+     let extraLosses24h = Number.isFinite(rawExtraLosses24h)
+      ? clampCore(Math.round(rawExtraLosses24h), 0, MAX_EXTRA_LOSSES_24H)
+      : rawExtraLosses24h;
+
+     return {
+      weightKg: weightKg,
+      ageGroup: inputs ? inputs.ageGroup : undefined,
+      extraLosses24h: extraLosses24h,
+      isSpecial: !!(inputs && inputs.isSpecial),
+      hasDiuresis: !!(inputs && inputs.hasDiuresis)
+     };
+    }
+
+    function calculateMaintenanceBase(weightKg) {
+     if (weightKg <= 10) return weightKg * 100;
+     if (weightKg <= 20) return 1000 + (weightKg - 10) * 50;
+     return Math.min(1500 + (weightKg - 20) * 20, MAX_MANUTENCAO_24H);
+    }
+
+    function validateInputs(inputs) {
+     const normalizedInputs = normalizeInputs(inputs);
+
+     if (!Number.isFinite(normalizedInputs.weightKg) || normalizedInputs.weightKg <= 0) {
+      return 'Informe um peso válido em kg.';
+     }
+     if (!Number.isFinite(normalizedInputs.extraLosses24h)) {
+      return 'Informe perdas contínuas adicionais válidas.';
+     }
+     if (normalizedInputs.ageGroup !== 'lt1' && normalizedInputs.ageGroup !== 'ge1') {
+      return 'Selecione uma faixa etária válida.';
+     }
+     return '';
+    }
+
+    function calculatePlanC(inputs) {
+     inputs = normalizeInputs(inputs);
+     const phase1Hours = inputs.ageGroup === 'lt1' ? 1 : 0.5;
+     const phase2Hours = inputs.ageGroup === 'lt1' ? 5 : 2.5;
+
+     const phase1Volume = inputs.weightKg * 30;
+     const phase2Volume = inputs.weightKg * 70;
+     const cautiousStartVolume = inputs.isSpecial ? inputs.weightKg * 10 : 0;
+     const cautiousStartHours = inputs.isSpecial ? phase1Hours : 0;
+     const expansionTotalVolume = inputs.isSpecial ? cautiousStartVolume : (phase1Volume + phase2Volume);
+     const expansionTotalHours = inputs.isSpecial ? cautiousStartHours : (phase1Hours + phase2Hours);
+
+     const maintenanceBase24h = calculateMaintenanceBase(inputs.weightKg);
+     const maintenanceSg24h = maintenanceBase24h * 0.8;
+     const maintenanceSf24h = maintenanceBase24h * 0.2;
+     const maintenanceKcl24h = inputs.hasDiuresis ? maintenanceBase24h * 0.02 : 0;
+     const maintenanceTotal24h = maintenanceBase24h + maintenanceKcl24h;
+
+     const replacementBase24h = (inputs.weightKg * 50) + inputs.extraLosses24h;
+     const replacementSg24h = replacementBase24h * 0.5;
+     const replacementSf24h = replacementBase24h * 0.5;
+
+     const totalWithoutKcl24h = maintenanceBase24h + replacementBase24h;
+     const totalSg24h = maintenanceSg24h + replacementSg24h;
+     const totalSf24h = maintenanceSf24h + replacementSf24h;
+     const totalWithKcl24h = totalWithoutKcl24h + maintenanceKcl24h;
+
+     return {
+      expansion: {
+       phase1Volume,
+       phase1Hours,
+       phase1Rate: phase1Volume / phase1Hours,
+       phase2Volume,
+       phase2Hours,
+       phase2Rate: phase2Volume / phase2Hours,
+       totalVolume: expansionTotalVolume,
+       totalHours: expansionTotalHours,
+       cautiousStartVolume: cautiousStartVolume,
+       cautiousStartHours: cautiousStartHours,
+       cautiousStartRate: inputs.isSpecial ? cautiousStartVolume / cautiousStartHours : 0
+      },
+      maintenance: {
+       base24h: maintenanceBase24h,
+       sg24h: maintenanceSg24h,
+       sf24h: maintenanceSf24h,
+       kcl24h: maintenanceKcl24h,
+       total24h: maintenanceTotal24h,
+       ratePerHour: maintenanceTotal24h / 24
+      },
+      replacement: {
+       base24h: replacementBase24h,
+       sg24h: replacementSg24h,
+       sf24h: replacementSf24h,
+       ratePerHour: replacementBase24h / 24
+      },
+      totals: {
+       withoutKcl24h: totalWithoutKcl24h,
+       withKcl24h: totalWithKcl24h,
+       sg24h: totalSg24h,
+       sf24h: totalSf24h,
+       kcl24h: maintenanceKcl24h,
+       ratePerHour: totalWithKcl24h / 24
+      }
+     };
+    }
+
+    function runSelfTests() {
+     const tests = [];
+
+     function expectClose(label, actual, expected, tolerance = 1e-9) {
+      if (!Number.isFinite(actual) || Math.abs(actual - expected) > tolerance) {
+       throw new Error(label + ' | esperado: ' + expected + ' | obtido: ' + actual);
+      }
+      tests.push(label);
+     }
+
+     let result = calculatePlanC({
+      weightKg: 10,
+      ageGroup: 'ge1',
+      extraLosses24h: 0,
+      isSpecial: false,
+      hasDiuresis: false
+     });
+     expectClose('Expansão total 10 kg', result.expansion.totalVolume, 1000);
+     expectClose('Fase 1 10 kg', result.expansion.phase1Volume, 300);
+     expectClose('Fase 2 10 kg', result.expansion.phase2Volume, 700);
+     expectClose('Manutenção base 10 kg', result.maintenance.base24h, 1000);
+     expectClose('Reposição base 10 kg', result.replacement.base24h, 500);
+     expectClose('KCl zero sem diurese', result.maintenance.kcl24h, 0);
+
+     result = calculatePlanC({
+      weightKg: 8,
+      ageGroup: 'lt1',
+      extraLosses24h: 120,
+      isSpecial: true,
+      hasDiuresis: true
+     });
+     expectClose('Expansão cautelosa total 8 kg', result.expansion.totalVolume, 80);
+     expectClose('Fase 1 <1 ano', result.expansion.phase1Hours, 1);
+     expectClose('Fase 2 <1 ano', result.expansion.phase2Hours, 5);
+     expectClose('Início cauteloso 8 kg', result.expansion.cautiousStartVolume, 80);
+          expectClose('Expansão cautelosa tempo total 8 kg', result.expansion.totalHours, 1);
+     expectClose('Manutenção base 8 kg', result.maintenance.base24h, 800);
+     expectClose('KCl manutenção 8 kg', result.maintenance.kcl24h, 16);
+     expectClose('Reposição com perdas extras', result.replacement.base24h, 520);
+
+     result = calculatePlanC({
+      weightKg: 25,
+      ageGroup: 'ge1',
+      extraLosses24h: 0,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Manutenção limitada 25 kg', result.maintenance.base24h, 1600);
+     expectClose('KCl 25 kg', result.maintenance.kcl24h, 32);
+
+     result = calculatePlanC({
+      weightKg: 50,
+      ageGroup: 'ge1',
+      extraLosses24h: 0,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Teto manutenção 50 kg', result.maintenance.base24h, 2000);
+     expectClose('Total com KCl 50 kg', result.maintenance.total24h, 2040);
+
+     let normalized = normalizeInputs({
+      weightKg: 120,
+      ageGroup: 'ge1',
+      extraLosses24h: 2500,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Normalização peso máximo 100 kg', normalized.weightKg, 100);
+     expectClose('Normalização perdas máximas 2.000 mL/24h', normalized.extraLosses24h, 2000);
+
+     normalized = normalizeInputs({
+      weightKg: -5,
+      ageGroup: 'lt1',
+      extraLosses24h: -50,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Normalização peso abaixo do mínimo para 1 kg', normalized.weightKg, 1);
+     expectClose('Normalização perdas negativas para zero', normalized.extraLosses24h, 0);
+
+     normalized = normalizeInputs({
+      weightKg: 8.1234,
+      ageGroup: 'lt1',
+      extraLosses24h: 150.7,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Normalização peso com 3 casas decimais', normalized.weightKg, 8.123);
+     expectClose('Normalização perdas sem casas decimais', normalized.extraLosses24h, 151);
+
+     result = calculatePlanC({
+      weightKg: 120,
+      ageGroup: 'ge1',
+      extraLosses24h: 2500,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Cálculo usa peso normalizado 100 kg', result.expansion.totalVolume, 10000);
+     expectClose('Cálculo usa perdas normalizadas 2.000 mL/24h', result.replacement.base24h, 7000);
+
+     normalized = normalizeInputs({
+      weightKg: 0,
+      ageGroup: 'lt1',
+      extraLosses24h: 0,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Normalização peso zero para 1 kg', normalized.weightKg, 1);
+
+     normalized = normalizeInputs({
+      weightKg: 0.001,
+      ageGroup: 'lt1',
+      extraLosses24h: 0,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Normalização peso menor que 1 kg para 1 kg', normalized.weightKg, 1);
+
+     result = calculatePlanC({
+      weightKg: 0,
+      ageGroup: 'lt1',
+      extraLosses24h: 0,
+      isSpecial: false,
+      hasDiuresis: true
+     });
+     expectClose('Cálculo usa peso mínimo normalizado 1 kg', result.expansion.totalVolume, 100);
+
+     return { passed: tests.length, total: tests.length };
+    }
+
+    return Object.freeze({
+     parseLocaleNumber,
+     normalizeInputs,
+     calculateMaintenanceBase,
+     validateInputs,
+     calculatePlanC,
+     runSelfTests
+    });
+   })();
+
+   // ==========================================================
+   // dom refs
+   // ==========================================================
+   const DOM = {
+    peso: document.getElementById('peso'),
+    faixa: document.getElementById('faixa'),
+    perdasExtras: document.getElementById('perdasExtras'),
+    especial: document.getElementById('especial'),
+    diurese: document.getElementById('diurese'),
+    btnLimpar: document.getElementById('btnLimpar'),
+    resultados: document.getElementById('resultados'),
+    mensagens: document.getElementById('mensagens'),
+    alertBox: document.getElementById('alertBox'),
+    fase1Row: document.getElementById('fase1Row'),
+    fase2Row: document.getElementById('fase2Row'),
+    especialRow: document.getElementById('especialRow')
+   };
+
+   // ==========================================================
+   // state
+   // ==========================================================
+   const UI_STATE = {
+    lastInputs: null,
+    lastResult: null
+   };
+
+   // ==========================================================
+   // formatters
+   // ==========================================================
+   function formatNumber(value, decimals) {
+    if (!Number.isFinite(value)) return '–';
+    return value.toLocaleString('pt-BR', {
+     minimumFractionDigits: decimals,
+     maximumFractionDigits: decimals
+    });
+   }
+
+   function formatMl(value, decimals) {
+    return formatNumber(value, decimals) + ' mL';
+   }
+
+   function formatRate(value, decimals) {
+    return formatNumber(value, decimals) + ' mL/h';
+   }
+
+   function formatHours(value) {
+    if (!Number.isFinite(value)) return '–';
+    if (Number.isInteger(value)) return value + ' h';
+    return formatNumber(value, 1) + ' h';
+   }
+
+   // ==========================================================
+   // ui renderers
+   // ==========================================================
+   function setText(id, text) {
+    document.getElementById(id).textContent = text;
+   }
+
+   function orderExpansionRows(inputs) {
+    if (!DOM.fase1Row || !DOM.fase2Row || !DOM.especialRow) return;
+    const tbody = DOM.fase1Row.parentNode || DOM.fase2Row.parentNode || DOM.especialRow.parentNode;
+    if (!tbody) return;
+
+    if (inputs.isSpecial) {
+     // Modo excludente: a expansão padrão 30 + 70 mL/kg desaparece.
+     DOM.fase1Row.style.display = 'none';
+     DOM.fase2Row.style.display = 'none';
+     DOM.especialRow.style.display = '';
+     tbody.insertBefore(DOM.especialRow, DOM.fase1Row);
+    } else {
+     // Modo padrão: mostrar 1ª fase e 2ª fase; ocultar início cauteloso.
+     DOM.fase1Row.style.display = '';
+     DOM.fase2Row.style.display = '';
+     DOM.especialRow.style.display = 'none';
+     tbody.appendChild(DOM.especialRow);
+    }
+   }
+
+   function showAlert(message) {
+    DOM.alertBox.textContent = message;
+    DOM.alertBox.style.display = 'block';
+   }
+
+   function clearAlert() {
+    DOM.alertBox.textContent = '';
+    DOM.alertBox.style.display = 'none';
+   }
+
+   function resetOutputs() {
+    DOM.resultados.style.display = 'none';
+    DOM.mensagens.innerHTML = '';
+    clearAlert();
+    UI_STATE.lastResult = null;
+   }
+
+   function renderExpansion(result, inputs) {
+    orderExpansionRows(inputs);
+    setText('expTotal', formatMl(result.expansion.totalVolume, 1));
+    setText('expTempoTotal', formatHours(result.expansion.totalHours));
+    setText('fase1Vol', formatMl(result.expansion.phase1Volume, 1));
+    setText('fase1Tempo', formatHours(result.expansion.phase1Hours));
+    setText('fase1Taxa', formatRate(result.expansion.phase1Rate, 1));
+    setText('fase2Vol', formatMl(result.expansion.phase2Volume, 1));
+    setText('fase2Tempo', formatHours(result.expansion.phase2Hours));
+    setText('fase2Taxa', formatRate(result.expansion.phase2Rate, 1));
+
+    if (inputs.isSpecial) {
+     setText('especialVol', formatMl(result.expansion.cautiousStartVolume, 1));
+     setText('especialTempo', formatHours(result.expansion.cautiousStartHours));
+     setText('especialTaxa', formatRate(result.expansion.cautiousStartRate, 1));
+    } else {
+     setText('especialVol', 'Não selecionado');
+     setText('especialTempo', '–');
+     setText('especialTaxa', '–');
+    }
+   }
+
+   function renderMaintenance(result, inputs) {
+    setText('manutBase', formatMl(result.maintenance.base24h, 1));
+    setText('manutTaxa', formatRate(result.maintenance.ratePerHour, 1));
+    setText('manutSG', formatMl(result.maintenance.sg24h, 1));
+    setText('manutSF', formatMl(result.maintenance.sf24h, 1));
+    setText('manutKCl', inputs.hasDiuresis ? formatMl(result.maintenance.kcl24h, 1) : '0,0 mL');
+    setText('manutTotal', formatMl(result.maintenance.total24h, 1));
+   }
+
+   function renderReplacement(result) {
+    setText('repoBase', formatMl(result.replacement.base24h, 1));
+    setText('repoTaxa', formatRate(result.replacement.ratePerHour, 1));
+    setText('repoSG', formatMl(result.replacement.sg24h, 1));
+    setText('repoSF', formatMl(result.replacement.sf24h, 1));
+    setText('repoTotal', formatMl(result.replacement.base24h, 1));
+   }
+
+   function renderTotals(result, inputs) {
+    setText('globalTotal', formatMl(result.totals.withoutKcl24h, 1));
+    setText('globalTaxa', formatRate(result.totals.ratePerHour, 1));
+    setText('globalSG', formatMl(result.totals.sg24h, 1));
+    setText('globalSF', formatMl(result.totals.sf24h, 1));
+    setText('globalKCl', inputs.hasDiuresis ? formatMl(result.totals.kcl24h, 1) : '0,0 mL');
+    setText('globalFinal', formatMl(result.totals.withKcl24h, 1));
+   }
+
+   function buildMessages(result, inputs) {
+    const messages = [];
+    if (inputs.isSpecial) {
+     messages.push(
+      '<div class="okbox"><strong>Expansão cautelosa:</strong> ' +
+      formatMl(result.expansion.cautiousStartVolume, 1) + ' em ' + formatHours(result.expansion.cautiousStartHours) +
+      '. Total da expansão exibida: <strong>' + formatMl(result.expansion.totalVolume, 1) + '</strong>.</div>'
+     );
+    } else {
+     messages.push(
+      '<div class="okbox"><strong>Expansão:</strong> ' +
+      formatMl(result.expansion.phase1Volume, 1) + ' em ' + formatHours(result.expansion.phase1Hours) +
+      ' + ' + formatMl(result.expansion.phase2Volume, 1) + ' em ' + formatHours(result.expansion.phase2Hours) +
+      '. Total da expansão: <strong>' + formatMl(result.expansion.totalVolume, 1) + '</strong>.</div>'
+     );
+    }
+
+    messages.push(
+     '<div class="okbox"><strong>Manutenção:</strong> ' + formatMl(result.maintenance.base24h, 1) +
+     ' / 24 h pelo método 100/50/20, correspondendo a SG 5% ' + formatMl(result.maintenance.sg24h, 1) +
+     ' + SF 0,9% ' + formatMl(result.maintenance.sf24h, 1) + '. ' +
+     (inputs.hasDiuresis
+      ? 'KCl 10% calculado: ' + formatMl(result.maintenance.kcl24h, 1) + '.'
+      : 'KCl não adicionado porque a diurese não foi marcada como estabelecida.') +
+     '</div>'
+    );
+
+    messages.push(
+     '<div class="okbox"><strong>Reposição:</strong> valor inicial ' +
+     formatMl(inputs.weightKg * 50, 1) + ' / 24 h, acrescido de perdas contínuas extras de ' +
+     formatMl(inputs.extraLosses24h, 1) + ', totalizando <strong>' +
+     formatMl(result.replacement.base24h, 1) + '</strong>.</div>'
+    );
+
+    if (!inputs.hasDiuresis) {
+     messages.push(
+      '<div class="warning"><strong>Segurança do potássio:</strong> o KCl foi mantido em zero porque a diurese não foi confirmada. A adição de potássio depende de diurese estabelecida e monitorização laboratorial.</div>'
+     );
+    }
+    if (inputs.isSpecial) {
+     messages.push(
+      '<div class="warning"><strong>Início cauteloso:</strong> Os 10ml/kg devem ser repetidos após avaliação médica e até totalizar o recomendado da fase de expansão.</div>'
+     );
+    }
+
+    const expansionRates = inputs.isSpecial
+     ? [result.expansion.cautiousStartRate]
+     : [result.expansion.phase1Rate, result.expansion.phase2Rate];
+
+    const calculatedRates = expansionRates.concat([
+     result.maintenance.ratePerHour,
+     result.replacement.ratePerHour,
+     result.totals.ratePerHour
+    ]).filter(function (value) {
+     return Number.isFinite(value);
+    });
+
+    const hasRateAboveStandardPumpLimit = calculatedRates.some(function (value) {
+     return value > 999;
+    });
+
+    if (hasRateAboveStandardPumpLimit) {
+     messages.push(
+      '<div class="warning"><strong>Atenção:</strong> taxa calculada superior ao limite de bomba de infusão padrão. Necessário acesso calibroso e infusão em fluxo livre (gravidade) ou bolsa de pressão.</div>'
+     );
+    }
+
+    if (inputs.ageGroup === 'lt1' && inputs.weightKg > 12) {
+     messages.push(
+      '<div class="warning"><strong>Atenção:</strong> O peso inserido é atípico para um lactente menor de 1 ano. Confirme a faixa etária para garantir o tempo correto de expansão.</div>'
+     );
+    }
+
+    if (inputs.weightKg > 40) {
+     messages.push(
+      '<div class="warning"><strong>Atenção:</strong> A fórmula estrita do Plano C (mL/kg) hiperestima volumes em adultos e adolescentes de grande porte. A expansão e reposição devem ser guiadas por metas clínicas (PA, diurese, lactato) e não por peso absoluto.</div>'
+     );
+    }
+
+
+
+    return messages.join('');
+   }
+
+   function renderResults(result, inputs) {
+    renderExpansion(result, inputs);
+    renderMaintenance(result, inputs);
+    renderReplacement(result);
+    renderTotals(result, inputs);
+    DOM.mensagens.innerHTML = buildMessages(result, inputs);
+    DOM.resultados.style.display = 'grid';
+    UI_STATE.lastResult = result;
+   }
+
+   // ==========================================================
+   // parsers / validators
+   // ==========================================================
+function formatWeightInputValue(value) {
+    if (!Number.isFinite(value)) return '';
+    return String(value);
+   }
+function readInputs() {
+    const rawInputs = {
+     weightKg: HydrationPlanCCore.parseLocaleNumber(DOM.peso.value),
+     ageGroup: DOM.faixa.value,
+     extraLosses24h: HydrationPlanCCore.parseLocaleNumber(DOM.perdasExtras.value),
+     isSpecial: DOM.especial.checked,
+     hasDiuresis: DOM.diurese.checked
+    };
+
+    const inputs = HydrationPlanCCore.normalizeInputs(rawInputs);
+
+    if (Number.isFinite(inputs.weightKg)) {
+     DOM.peso.value = formatWeightInputValue(inputs.weightKg);
+    }
+
+    if (Number.isFinite(inputs.extraLosses24h)) {
+     DOM.perdasExtras.value = String(inputs.extraLosses24h);
+    }
+
+    UI_STATE.lastInputs = inputs;
+    return inputs;
+   }
+
+   // ==========================================================
+   // event handlers
+   // ==========================================================
+   function handleCalculate() {
+    const inputs = readInputs();
+    const validationError = HydrationPlanCCore.validateInputs(inputs);
+
+    if (validationError) {
+     resetOutputs();
+     showAlert(validationError);
+     return;
+    }
+
+    clearAlert();
+    renderResults(HydrationPlanCCore.calculatePlanC(inputs), inputs);
+   }
+
+   function handleReset() {
+    DOM.peso.value = '6';
+    DOM.faixa.value = 'lt1';
+    DOM.perdasExtras.value = '0';
+    DOM.especial.checked = false;
+    DOM.diurese.checked = true;
+    UI_STATE.lastInputs = null;
+    handleCalculate();
+   }
+
+   function handleAutoRecalculate() {
+    handleCalculate();
+   }
+
+   function bindAutoRecalculation() {
+    // Campos alteráveis não marcáveis recalculam apenas ao sair do campo.
+    [DOM.peso, DOM.perdasExtras, DOM.faixa].forEach(function (element) {
+     if (!element) return;
+     element.addEventListener('blur', handleAutoRecalculate);
+    });
+
+    // Opções de marcar recalculam imediatamente ao marcar/desmarcar.
+    [DOM.especial, DOM.diurese].forEach(function (element) {
+     if (!element) return;
+     element.addEventListener('change', handleAutoRecalculate);
+    });
+   }
+
+
+   function bindMinimizableCards() {
+    const cardComposicaoTotal = document.getElementById('cardComposicaoTotal');
+    if (!cardComposicaoTotal) return;
+
+    const title = cardComposicaoTotal.querySelector('.section-title');
+    if (!title) return;
+
+    title.setAttribute('role', 'button');
+    title.setAttribute('tabindex', '0');
+    title.setAttribute('aria-expanded', String(!cardComposicaoTotal.classList.contains('is-minimized')));
+
+    function toggleCard() {
+     cardComposicaoTotal.classList.toggle('is-minimized');
+     title.setAttribute('aria-expanded', String(!cardComposicaoTotal.classList.contains('is-minimized')));
+    }
+
+    title.addEventListener('click', toggleCard);
+    title.addEventListener('keydown', function (event) {
+     if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleCard();
+     }
+    });
+   }
+
+   // ==========================================================
+   // bootstrap
+   // ==========================================================
+   function init() {
+    DOM.btnLimpar.addEventListener('click', handleReset);
+    bindAutoRecalculation();
+    bindMinimizableCards();
+    handleCalculate();
+   }
+
+   window.HydrationPlanCCore = HydrationPlanCCore;
+   document.addEventListener('DOMContentLoaded', init);
+  })();
+ </script>
+
+</body>
+</html>
